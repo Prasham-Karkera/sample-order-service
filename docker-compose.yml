@@ -1,0 +1,38 @@
+name: ka-chow-order-service
+
+services:
+  order-service:
+    build: .
+    container_name: fleetbite-order-service
+    ports:
+      - "8002:8002"
+    environment:
+      ORD_DATABASE_URL: postgresql+asyncpg://postgres:postgres@order-db:5432/fb_orders
+      ORD_JWT_SECRET_KEY: dev-secret-match-gateway
+      ORD_USER_SERVICE_URL: http://user-service:8001
+      ORD_INVENTORY_SERVICE_URL: http://inventory-service:8003
+      ORD_NOTIFICATION_SERVICE_URL: http://notification-service:8004
+    depends_on:
+      order-db:
+        condition: service_healthy
+    networks:
+      - fleetbite-network
+
+  order-db:
+    image: postgres:16
+    container_name: fleetbite-order-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fb_orders
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleetbite-network
+
+networks:
+  fleetbite-network:
+    external: true
