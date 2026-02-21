@@ -1,7 +1,7 @@
 # ka-chow-order-service
 
 > **Service:** Order Processing  
-> **Port:** 8002  
+> **Port:** 8001  
 > **Team:** Commerce  
 > **Database:** `fb_orders` (PostgreSQL)
 
